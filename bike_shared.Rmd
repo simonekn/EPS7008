@@ -1,0 +1,78 @@
+---
+title: "Tarefa 3"
+author: Simone K Nadolny
+output: html_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(forcats)
+hour <- read_csv("Tarefa3/hour.csv")
+#hour$season <- factor(hour$season)
+
+hour["estação"] <- hour$season
+bike_shared <- hour
+```
+```{r}
+bike_shared$estação <- factor(bike_shared$estação, levels = c(2,3,4,1),
+                           labels=c("Primevara","Verão", "Outono", "Inverno"))
+
+```
+```{r}
+bike_shared$holiday <- factor(bike_shared$holiday, levels = c(0,1),
+                           labels=c("Não","Sim"))
+```
+```{r}
+bike_shared$workingday <- factor(bike_shared$workingday, levels = c(0,1),
+                           labels=c("Não","Sim"))
+```
+```{r}
+bike_shared$yr <- factor(bike_shared$yr, levels = c(0,1),
+                           labels=c("2011","2021"))
+```
+
+```{r}
+bike_shared$weathersit <- factor(bike_shared$weathersit, levels = c(1,2,3,4),
+                           labels=c("Claro","Névoa", "Precip. Leve", "Precip. pesada"))
+```
+
+```{r}
+bike_shared$temp <- bike_shared$temp*41
+bike_shared$atemp <- bike_shared$atemp*50
+bike_shared$hum <- bike_shared$hum*100
+bike_shared$windspeed <- bike_shared$windspeed*67
+```
+OBS: WEEKDAYS: 0-Domingo 
+
+```{r}
+bike_shared$weekday <- factor(bike_shared$weekday, levels = c(1,2,3,4,5,6,0),
+                           labels=c("2a-f","3a-fa", "4a-f", "5a-f", "6a-f", "Sábado", "Domingo"))
+```
+```{r}
+bike_shared$hr <- factor(bike_shared$hr, levels = c(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23))
+```
+```{r}
+bike_shared["qtd"] <- bike_shared$cnt
+```
+
+```{r}
+corestemperatura <- c("#191970","#4169E1","5F9EA0","#32CD32","#00f5d4")
+theme_set(theme_minimal())
+
+bike_shared %>%
+  group_by(dteday)%>%
+  summarise(total=sum(qtd), temperatura=mean(atemp))%>%
+  ggplot(aes(dteday, total, color = temperatura))+geom_point(size=3.1, alpha=0.6)+ theme_bw()+
+  scale_color_gradient2(low = "dark blue",mid = "dark green", high = "yellow")+labs("Data","Bikes Alugadas", color = "Temperatura (ºC)", title = "Bikes alugadas em DC, 2011 e 2012", subtitle = "Temperaturas mais quentes associadas com mais bikes alugadas" )
+```
+```{r}
+
+```
+
